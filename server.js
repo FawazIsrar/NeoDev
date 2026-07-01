@@ -14,6 +14,7 @@ app.use ('/api/posts', require('./routes/api/post'));
 app.use ('/api/ai', require('./routes/api/ai'));
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
+module.exports = app;
 
 
 
