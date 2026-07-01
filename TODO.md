@@ -1,5 +1,0 @@
-- [x] Update Profile.js to pass props as 'exp' and 'edu' instead of 'experience' and 'education'
-- [x] Update ProfileExperience.js to destructure 'exp' prop and remove unused 'location'
-- [x] Update ProfileEducation.js to destructure 'edu' prop
-- [ ] Update ProfileGithub.js to use connect instead of hooks, limit repos to latest 5, adjust Spinner condition, and update PropTypes
-- [ ] Test the profile display section
