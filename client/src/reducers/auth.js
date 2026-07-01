@@ -6,6 +6,7 @@ import {
   REGISTER_FAIL,
   USER_LOADED,
   AUTH_ERROR,
+  UPDATE_AVATAR
 } from '../actions/types';
 
 const initialState = {
@@ -25,6 +26,12 @@ export default function auth(state = initialState, action) {
         isAuthenticated: true,
         loading: false,
         user: payload,
+      };
+    case UPDATE_AVATAR:
+      return {
+        ...state,
+        user: { ...state.user, avatar: payload },
+        loading: false
       };
     case LOGIN_SUCCESS:
     case REGISTER_SUCCESS:

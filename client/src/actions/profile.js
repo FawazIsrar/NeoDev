@@ -9,7 +9,8 @@ import {
   GET_PROFILES,
   GET_REPOS,
   REPOS_ERROR,
-  LOGOUT
+  LOGOUT,
+  UPDATE_AVATAR
 } from "./types";
 
 // Get current users profile
@@ -293,5 +294,29 @@ export const deleteAccount = () => async (dispatch) => {
         payload: { msg: err.response?.statusText || 'Server Error', status: err.response?.status || 500 },
       });
     }
+  }
+};
+
+// Upload Avatar
+export const uploadAvatar = (base64Image) => async (dispatch) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const res = await axios.put("/api/users/avatar", { base64Image }, config);
+
+    dispatch({
+      type: UPDATE_AVATAR,
+      payload: res.data,
+    });
+
+    dispatch(setAlert("Avatar Updated Successfully", "success"));
+  } catch (err) {
+    console.log('Upload avatar error:', err);
+    const errorMsg = err.response?.data?.msg || err.message || 'Failed to upload avatar';
+    dispatch(setAlert(errorMsg, "danger"));
   }
 };

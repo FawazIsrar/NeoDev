@@ -4,7 +4,7 @@ connectDB();
 const mongoose = require('mongoose');
 const app = express();
 app.get('/', (req, res) => res.send('API Running '));
-app.use(express.json({ extended: false }));
+app.use(express.json({ extended: false, limit: '1mb' }));
 // Define Routes
 const PORT = process.env.PORT || 5000;
 app.use ('/api/users', require('./routes/api/users'));

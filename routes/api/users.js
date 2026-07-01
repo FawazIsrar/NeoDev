@@ -5,7 +5,9 @@ const User = require('../../models/Users');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
- const config = require('config');  
+const config = require('config');
+const auth = require('../../middleware/auth');
+const Post = require('../../models/Post');
 
 // @route    POST api/users
 // @desc     Register user
@@ -62,5 +64,43 @@ router.post(
     }
   }
 );
+
+// @route    PUT api/users/avatar
+// @desc     Upload/Update user avatar via base64
+// @access   Private
+router.put('/avatar', auth, async (req, res) => {
+  try {
+    const { base64Image } = req.body;
+    if (!base64Image) {
+      return res.status(400).json({ msg: 'No image provided' });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    user.avatar = base64Image;
+    await user.save();
+
+    // Update avatar on all user's posts
+    await Post.updateMany(
+      { user: req.user.id },
+      { $set: { avatar: base64Image } }
+    );
+
+    // Update avatar on all user's comments across all posts
+    await Post.updateMany(
+      { "comments.user": req.user.id },
+      { $set: { "comments.$[elem].avatar": base64Image } },
+      { arrayFilters: [{ "elem.user": req.user.id }] }
+    );
+
+    res.json(user.avatar);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 module.exports = router;
