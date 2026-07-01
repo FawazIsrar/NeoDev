@@ -12,7 +12,7 @@ class ProfileGithub extends Component {
   }
 
   render() {
-    const { username, repos, reposError, loading } = this.props;
+    const { username, repos, reposError } = this.props;
 
     if (!username) {
       return <h4>No GitHub username provided</h4>;
