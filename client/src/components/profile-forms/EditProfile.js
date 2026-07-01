@@ -1,0 +1,302 @@
+import React, { useState, Fragment, useEffect } from "react";
+import axios from "axios";
+import PropTypes from "prop-types";
+import { connect, useSelector, useDispatch } from "react-redux";
+import { createProfile, getCurrentProfile } from "../../actions/profile";
+import { Link, useNavigate } from "react-router-dom";
+
+const EditProfile = ({ createProfile }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { profile, loading } = useSelector((state) => state.profile);
+
+  const [formData, setFormData] = useState({
+    company: "",
+    website: "",
+    location: "",
+    status: "",
+    skills: "",
+    githubusername: "",
+    bio: "",
+    twitter: "",
+    facebook: "",
+    linkedin: "",
+    youtube: "",
+    instagram: "",
+  });
+
+  const [displaySocialInputs, toggleSocialInputs] = useState(false);
+  const [isGeneratingBio, setIsGeneratingBio] = useState(false);
+
+  const generateBio = async () => {
+    if (!formData.skills || !formData.status) {
+      alert("Please fill in Skills and Status first so the AI has context.");
+      return;
+    }
+    try {
+      setIsGeneratingBio(true);
+      const res = await axios.post("/api/ai/generate-bio", {
+        skills: formData.skills,
+        status: formData.status,
+        company: formData.company,
+      });
+      setFormData({ ...formData, bio: res.data.bio });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to generate bio. Make sure GEMINI_API_KEY is set in .env");
+    } finally {
+      setIsGeneratingBio(false);
+    }
+  };
+
+  const {
+    company,
+    website,
+    location,
+    status,
+    skills,
+    githubusername,
+    bio,
+    twitter,
+    facebook,
+    linkedin,
+    youtube,
+    instagram,
+  } = formData;
+
+  useEffect(() => {
+    dispatch(getCurrentProfile());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        company: profile.company || "",
+        website: profile.website || "",
+        location: profile.location || "",
+        status: profile.status || "",
+        skills: profile.skills ? profile.skills.join(",") : "",
+        githubusername: profile.githubusername || "",
+        bio: profile.bio || "",
+        twitter: profile.social ? profile.social.twitter || "" : "",
+        facebook: profile.social ? profile.social.facebook || "" : "",
+        linkedin: profile.social ? profile.social.linkedin || "" : "",
+        youtube: profile.social ? profile.social.youtube || "" : "",
+        instagram: profile.social ? profile.social.instagram || "" : "",
+      });
+      // Show social inputs if any social link exists
+      if (profile.social && (profile.social.twitter || profile.social.facebook || profile.social.linkedin || profile.social.youtube || profile.social.instagram)) {
+        toggleSocialInputs(true);
+      }
+    }
+  }, [profile]);
+
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    createProfile(formData, navigate, true); // pass true for edit
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <Fragment>
+      <h1 className="large text-primary">Edit Your Profile</h1>
+      <p className="lead">
+        <i className="fas fa-user"></i> Make changes to your profile
+      </p>
+      <small>* = required field</small>
+      <form className="form" onSubmit={onSubmit}>
+        <div className="form-group">
+          <select name="status" value={status} onChange={onChange}>
+            <option value="0">* Select Professional Status</option>
+            <option value="Developer">Developer</option>
+            <option value="Junior Developer">Junior Developer</option>
+            <option value="Senior Developer">Senior Developer</option>
+            <option value="Manager">Manager</option>
+            <option value="Student or Learning">Student or Learning</option>
+            <option value="Instructor">Instructor or Teacher</option>
+            <option value="Intern">Intern</option>
+            <option value="Other">Other</option>
+          </select>
+          <small className="form-text">
+            Give us an idea of where you are at in your career
+          </small>
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Company"
+            name="company"
+            value={company}
+            onChange={onChange}
+          />
+          <small className="form-text">
+            Could be your own company or one you work for
+          </small>
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Website"
+            name="website"
+            value={website}
+            onChange={onChange}
+          />
+          <small className="form-text">
+            Could be your own or a company website
+          </small>
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Location"
+            name="location"
+            value={location}
+            onChange={onChange}
+          />
+          <small className="form-text">
+            City & state suggested (eg. Boston, MA)
+          </small>
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="* Skills"
+            name="skills"
+            value={skills}
+            onChange={onChange}
+          />
+          <small className="form-text">
+            Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)
+          </small>
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Github Username"
+            name="githubusername"
+            value={githubusername}
+            onChange={onChange}
+          />
+          <small className="form-text">
+            If you want your latest repos and a Github link, include your
+            username
+          </small>
+        </div>
+
+        <div className="form-group">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <small className="form-text">Tell us a little about yourself</small>
+            <button 
+              type="button" 
+              className="btn btn-dark" 
+              onClick={generateBio}
+              disabled={isGeneratingBio}
+              style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', margin: '0 0 0.5rem 0' }}
+            >
+              <i className="fas fa-magic"></i> {isGeneratingBio ? 'Generating...' : 'Generate with AI'}
+            </button>
+          </div>
+          <textarea
+            placeholder="A short bio of yourself"
+            name="bio"
+            value={bio}
+            onChange={onChange}
+            rows="4"
+          />
+        </div>
+
+        <div className="my-2">
+          <button
+            onClick={() => toggleSocialInputs(!displaySocialInputs)}
+            type="button"
+            className="btn btn-light"
+          >
+            Add Social Network Links
+          </button>
+          <span>Optional</span>
+        </div>
+
+        {displaySocialInputs && (
+          <Fragment>
+            <div className="form-group social-input">
+              <i className="fab fa-twitter fa-2x"></i>
+              <input
+                type="text"
+                placeholder="Twitter URL"
+                name="twitter"
+                value={twitter}
+                onChange={onChange}
+              />
+            </div>
+
+            <div className="form-group social-input">
+              <i className="fab fa-facebook fa-2x"></i>
+              <input
+                type="text"
+                placeholder="Facebook URL"
+                name="facebook"
+                value={facebook}
+                onChange={onChange}
+              />
+            </div>
+
+            <div className="form-group social-input">
+              <i className="fab fa-youtube fa-2x"></i>
+              <input
+                type="text"
+                placeholder="YouTube URL"
+                name="youtube"
+                value={youtube}
+                onChange={onChange}
+              />
+            </div>
+
+            <div className="form-group social-input">
+              <i className="fab fa-linkedin fa-2x"></i>
+              <input
+                type="text"
+                placeholder="Linkedin URL"
+                name="linkedin"
+                value={linkedin}
+                onChange={onChange}
+              />
+            </div>
+
+            <div className="form-group social-input">
+              <i className="fab fa-instagram fa-2x"></i>
+              <input
+                type="text"
+                placeholder="Instagram URL"
+                name="instagram"
+                value={instagram}
+                onChange={onChange}
+              />
+            </div>
+          </Fragment>
+        )}
+
+        <input type="submit" className="btn btn-primary my-1" />
+        <Link className="btn btn-light my-1" to="/dashboard">
+          Go Back
+        </Link>
+      </form>
+    </Fragment>
+  );
+};
+
+EditProfile.propTypes = {
+  createProfile: PropTypes.func.isRequired,
+};
+
+export default connect(null, { createProfile, getCurrentProfile })(EditProfile);

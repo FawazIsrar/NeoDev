@@ -1,0 +1,5 @@
+{
+  "mongoURI": "MONGO_URI",
+  "jwtSecret": "JWT_SECRET",
+  "geminiApiKey": "GEMINI_API_KEY"
+}
