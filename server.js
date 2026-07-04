@@ -1,4 +1,17 @@
 const express = require('express');
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
+if (!process.env.MONGO_URI) {
+  console.error("FATAL ERROR: MONGO_URI environment variable is missing.");
+  process.exit(1);
+}
+if (!process.env.JWT_SECRET) {
+  console.error("FATAL ERROR: JWT_SECRET environment variable is missing.");
+  process.exit(1);
+}
+
 const connectDB = require('./config/db');
 connectDB();
 const mongoose = require('mongoose');

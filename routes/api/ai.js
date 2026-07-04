@@ -3,10 +3,9 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const { GoogleGenAI } = require('@google/genai');
-const config = require('config');
 
 // Initialize Gemini SDK
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || config.get('geminiApiKey') });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // @route    POST api/ai/generate-bio
 // @desc     Generate a professional bio using Gemini AI

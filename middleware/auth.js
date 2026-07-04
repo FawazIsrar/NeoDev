@@ -1,5 +1,4 @@
- const jwt=require('jsonwebtoken');
- const config=require('config');
+const jwt=require('jsonwebtoken');
     module.exports=function(req,res,next){
         //Get token from header
         const token=req.header('x-auth-token');
@@ -9,7 +8,7 @@
         }
         //Verify token
         try{
-            const decoded=jwt.verify(token, process.env.JWT_SECRET || config.get('jwtSecret'));
+            const decoded=jwt.verify(token, process.env.JWT_SECRET);
             req.user=decoded.user;
             next();
         }catch(err){
