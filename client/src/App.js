@@ -1,6 +1,7 @@
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import Navbar from "./components/layouts/Navbar";
+import Footer from "./components/layouts/Footer";
 import { BrowserRouter as Router, Route, Routes, Outlet } from "react-router-dom";
 import Landing from "./components/layouts/Landing";
 import Register from "./components/auth/Register";
@@ -20,7 +21,10 @@ import Posts from "./components/posts/Posts";
 import Post from "./components/post/Post";
 import Profiles from "./components/profiles/Profiles";
 import Profile from "./components/profile/Profile";
-import GalaxyBackground from "./components/layouts/GalaxyBackground";
+import Documentation from "./components/pages/Documentation";
+import ApiReference from "./components/pages/ApiReference";
+import PrivacyPolicy from "./components/pages/PrivacyPolicy";
+
 
 // Check for token and set auth token header
 if (localStorage.token) {
@@ -35,8 +39,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
-        <Fragment>
-          <GalaxyBackground />
+        <div className="flex flex-col min-h-screen">
           <Navbar />
           <Routes>
             <Route path="/" element={<Landing />} />
@@ -52,6 +55,9 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/profiles" element={<Profiles />} />
               <Route path="/profile/:id" element={<Profile />} />
+              <Route path="/docs" element={<Documentation />} />
+              <Route path="/api" element={<ApiReference />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route
                 path="/dashboard"
                 element={<PrivateRoute element={Dashboard} />}
@@ -82,7 +88,8 @@ const App = () => {
               />
             </Route>
           </Routes>
-        </Fragment>
+          <Footer />
+        </div>
       </Router>
     </Provider>
   );

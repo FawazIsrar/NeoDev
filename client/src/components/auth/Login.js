@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -25,41 +25,81 @@ const Login = ({ login, isAuthenticated }) => {
   }
 
   return (
-    <Fragment>
-      <section>
-        <h1 className="large text-primary">Sign In</h1>
-        <p className="lead">
-          <i className="fas fa-user"></i> Sign Into Your Account
-        </p>
-        <form className="form" onSubmit={onSubmit}>
-          <div className="form-group">
-            <input
-              type="email"
-              placeholder="Email Address"
-              name="email"
-              value={email}
-              onChange={onChange}
-              required
-            />
+    <main className="relative z-10 w-full flex flex-col items-center justify-center min-h-[calc(100vh-160px)] pt-28 pb-xl">
+      {/* Background Orbs */}
+      <div className="absolute w-[60vw] h-[60vw] bg-[radial-gradient(circle,rgba(78,222,163,0.05)_0%,rgba(5,20,36,0)_70%)] rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 pointer-events-none"></div>
+      <div className="absolute w-[40vw] h-[40vw] bg-[radial-gradient(circle,rgba(192,193,255,0.03)_0%,rgba(5,20,36,0)_70%)] rounded-full top-[20%] right-[10%] -z-10 pointer-events-none"></div>
+
+      {/* Glassmorphism Login Card */}
+      <div className="w-full max-w-[440px] bg-surface/30 backdrop-blur-[40px] border border-white/10 rounded-xl shadow-[0_8px_32px_0_rgba(99,102,241,0.15)] p-lg relative overflow-hidden">
+        {/* Subtle inner top edge glow */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+        
+        {/* Header */}
+        <div className="text-center mb-lg">
+          <h1 className="font-sans text-hero text-primary font-bold tracking-tight mb-xs">NeoDev</h1>
+          <p className="font-sans text-body text-on-surface-variant">Initialize your session.</p>
+        </div>
+        
+        {/* Form */}
+        <form className="flex flex-col gap-md" onSubmit={onSubmit}>
+          {/* Email Field */}
+          <div className="flex flex-col gap-xs relative group">
+            <label className="sr-only" htmlFor="email">Email Address</label>
+            <div className="relative flex items-center">
+              <span className="material-symbols-outlined absolute left-sm text-outline-variant group-focus-within:text-primary transition-colors">mail</span>
+              <input 
+                className="w-full h-[52px] bg-surface-dim/80 border border-white/5 rounded-lg pl-[48px] pr-sm font-sans text-input text-on-surface placeholder:text-outline-variant placeholder:text-sm placeholder:font-light focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all shadow-inner" 
+                id="email" 
+                name="email"
+                value={email}
+                onChange={onChange}
+                placeholder="Email Address" 
+                type="email" 
+                required 
+              />
+            </div>
           </div>
-          <div className="form-group">
-            <input
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={password}
-              onChange={onChange}
-              minLength="6"
-              required
-            />
+          
+          {/* Password Field */}
+          <div className="flex flex-col gap-xs relative group">
+            <label className="sr-only" htmlFor="password">Password</label>
+            <div className="relative flex items-center">
+              <span className="material-symbols-outlined absolute left-sm text-outline-variant group-focus-within:text-primary transition-colors">lock</span>
+              <input 
+                className="w-full h-[52px] bg-surface-dim/80 border border-white/5 rounded-lg pl-[48px] pr-sm font-sans text-input text-on-surface placeholder:text-outline-variant placeholder:text-sm placeholder:font-light focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all shadow-inner" 
+                id="password" 
+                name="password"
+                value={password}
+                onChange={onChange}
+                placeholder="Password" 
+                type="password" 
+                minLength="6"
+                required 
+              />
+            </div>
           </div>
-          <input type="submit" className="btn btn-primary" value="Login" />
+          
+          {/* Actions */}
+          <div className="mt-xs">
+            <button 
+              className="w-full h-[52px] bg-primary text-on-primary rounded-lg font-sans text-button uppercase tracking-wider hover:bg-primary-fixed transition-all duration-300 shadow-[0_0_15px_rgba(78,222,163,0.15)] hover:shadow-[0_0_25px_rgba(78,222,163,0.3)] active:scale-[0.98] flex items-center justify-center gap-xs" type="submit"
+            >
+              Login
+              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+          </div>
         </form>
-        <p className="my-1">
-          Don't have an account? <Link to="/register">Sign up</Link>
-        </p>
-      </section>
-    </Fragment>
+        
+        {/* Footer Links */}
+        <div className="mt-lg pt-md border-t border-white/5 flex flex-col items-center gap-xs">
+          <p className="font-sans text-body-sm text-on-surface-variant">
+            Don't have an account? 
+            <Link className="text-primary hover:text-primary-fixed transition-colors font-medium ml-1" to="/register">Register</Link>
+          </p>
+        </div>
+      </div>
+    </main>
   );
 };
 

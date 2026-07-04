@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { addPost } from '../../actions/post';
 
 const PostForm = ({ addPost }) => {
   const [text, setText] = useState('');
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const user = useSelector(state => state.auth.user);
 
   const enhancePost = async () => {
     if (!text) {
@@ -27,38 +28,52 @@ const PostForm = ({ addPost }) => {
   };
 
   return (
-    <div className="comment-form-container glass-panel">
-      <h3 className="text-primary" style={{ marginBottom: '1rem' }}>Create a Post</h3>
-      <form
-        className="form"
-        onSubmit={e => {
-          e.preventDefault();
-          addPost({ text });
-          setText('');
-        }}
-      >
-        <textarea
-          name="text"
-          cols="30"
-          rows="3"
-          placeholder="What's on your mind?"
-          value={text}
-          onChange={e => setText(e.target.value)}
-          required
-        ></textarea>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
-          <input type="submit" className="btn btn-primary" value="Post" style={{ margin: 0 }} />
-          <button 
-            type="button" 
-            className="btn btn-dark" 
-            onClick={enhancePost}
-            disabled={isEnhancing}
-            style={{ margin: 0, padding: '0.6rem 1rem' }}
+    <div className="glass-card rounded-xl p-md mb-md border-white/5 shadow-lg">
+      <div className="flex gap-sm items-start">
+        <img 
+          src={user?.avatar || "https://via.placeholder.com/200"} 
+          alt="Current User Avatar" 
+          className="w-12 h-12 rounded-full border border-white/10 object-cover shrink-0" 
+        />
+        <div className="w-full">
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              addPost({ text });
+              setText('');
+            }}
           >
-            <i className="fas fa-magic"></i> {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
-          </button>
+            <textarea
+              name="text"
+              className="bg-surface-container-low border border-white/10 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 w-full rounded-lg p-3 text-on-surface placeholder-on-surface-variant/50 placeholder:text-sm placeholder:font-light resize-none min-h-[100px] font-sans text-input transition-all outline-none"
+              placeholder="Share your latest architectural musings..."
+              value={text}
+              onChange={e => setText(e.target.value)}
+              required
+            ></textarea>
+            
+            <div className="flex justify-between items-center mt-sm pt-sm border-t border-white/5">
+              <div className="flex gap-2">
+                <button 
+                  type="button" 
+                  onClick={enhancePost}
+                  disabled={isEnhancing}
+                  className="bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30 rounded-full px-3 py-1 font-sans text-caption uppercase text-[10px] uppercase tracking-wider flex items-center gap-1 transition-colors disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-[14px]">magic_button</span>
+                  {isEnhancing ? 'Enhancing...' : 'AI Enhance'}
+                </button>
+              </div>
+              <button 
+                type="submit"
+                className="bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary-fixed px-5 py-2 rounded-lg font-medium shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:shadow-[0_0_15px_rgba(78,222,163,0.4)] transition-all text-sm"
+              >
+                Post
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

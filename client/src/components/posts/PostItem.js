@@ -13,59 +13,67 @@ const PostItem = ({
   post: { _id, text, name, avatar, user, likes, comments, date },
   showActions
 }) => (
-  <div className="post-card glass-panel my-1">
-    <div className="post-header">
-      <Link to={`/profile/${user}`} className="post-user-info">
-        <img className="round-img" src={avatar} alt="" />
+  <article className="glass-card rounded-xl p-md flex flex-col gap-sm border-white/5 transition-all duration-300 hover:border-white/20">
+    {/* Author Header */}
+    <div className="flex justify-between items-center">
+      <Link to={`/profile/${user}`} className="flex items-center gap-3 group">
+        <img 
+          className="w-10 h-10 rounded-full border border-white/10 object-cover group-hover:border-primary/50 transition-colors" 
+          src={avatar || "https://via.placeholder.com/150"} 
+          alt={name} 
+        />
         <div>
-          <h4>{name}</h4>
-          <p className="post-date text-primary">
+          <h4 className="font-bold text-on-surface group-hover:text-primary-fixed-dim transition-colors">{name}</h4>
+          <p className="text-xs text-on-surface-variant font-code">
             <Moment format="YYYY/MM/DD hh:mm A">{date}</Moment>
           </p>
         </div>
       </Link>
+      
       {!auth.loading && auth.user && user === auth.user._id && (
         <button
           onClick={() => deletePost(_id)}
-          type="button"
-          className="btn btn-dark"
-          style={{ padding: '0.4rem 0.8rem', borderRadius: '8px' }}
+          className="text-on-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-error/10"
+          title="Delete Post"
         >
-          <i className="fas fa-trash-alt"></i>
+          <span className="material-symbols-outlined text-[20px]">delete</span>
         </button>
       )}
     </div>
 
-    <div className="post-body my-1">
-      <p>{text}</p>
+    {/* Content */}
+    <div className="text-on-surface font-sans text-body mt-2">
+      <p className="whitespace-pre-wrap">{text}</p>
     </div>
 
-    <div className="post-actions">
-      <button
+    {/* Actions */}
+    <div className="flex items-center gap-md mt-2 pt-3 border-t border-white/5">
+      <button 
         onClick={() => addLike(_id)}
-        type="button"
-        className="btn btn-light"
+        className="flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors group"
       >
-        <i className="fas fa-thumbs-up"></i>{' '}
-        <span>{likes.length > 0 && <span>{likes.length}</span>}</span>
+        <span className="material-symbols-outlined text-[20px] group-hover:fill-current">thumb_up</span>
+        {likes.length > 0 && <span className="text-sm font-medium">{likes.length}</span>}
       </button>
-      <button
+      
+      <button 
         onClick={() => removeLike(_id)}
-        type="button"
-        className="btn btn-light"
+        className="flex items-center gap-1 text-on-surface-variant hover:text-error transition-colors"
       >
-        <i className="fas fa-thumbs-down"></i>
+        <span className="material-symbols-outlined text-[20px]">thumb_down</span>
       </button>
+
       {showActions && (
-        <Link to={`/posts/${_id}`} className="btn btn-primary">
-          Discussion{' '}
-          {comments.length > 0 && (
-            <span className="comment-count">{comments.length}</span>
-          )}
+        <Link 
+          to={`/posts/${_id}`} 
+          className="flex items-center gap-1 text-on-surface-variant hover:text-secondary transition-colors"
+        >
+          <span className="material-symbols-outlined text-[20px]">chat_bubble</span>
+          {comments.length > 0 && <span className="text-sm font-medium">{comments.length}</span>}
         </Link>
       )}
     </div>
-  </div>
+  </article>
 );
 
 PostItem.defaultProps = {
@@ -85,6 +93,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { addLike, removeLike, deletePost })(
-  PostItem
-);
+export default connect(mapStateToProps, { addLike, removeLike, deletePost })(PostItem);

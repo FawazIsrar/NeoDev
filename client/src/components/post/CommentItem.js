@@ -11,30 +11,49 @@ const CommentItem = ({
   auth,
   deleteComment
 }) => (
-  <div className="comment-item glass-panel">
-    <div>
-      <Link to={`/profile/${user}`}>
-        <img className="round-img" src={avatar} alt="" />
-        <h4 className="text-center">{name}</h4>
-      </Link>
-    </div>
-    <div className="comment-content">
-      <div className="comment-header">
-        <p className="post-date text-primary" style={{ margin: 0, fontSize: '0.9rem' }}>
-          <Moment format="YYYY/MM/DD">{date}</Moment>
-        </p>
+  <div className="flex gap-4">
+    <Link to={`/profile/${user}`} className="shrink-0">
+      <img 
+        className="w-10 h-10 rounded-full border border-white/10 object-cover hover:border-primary/50 transition-colors" 
+        src={avatar || "https://via.placeholder.com/150"} 
+        alt={name} 
+      />
+    </Link>
+    
+    <div className="glass-card rounded-lg rounded-tl-none p-4 w-full relative group hover:border-white/20 transition-colors">
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <Link to={`/profile/${user}`}>
+            <span className="font-sans text-body-sm font-bold text-on-surface hover:text-primary transition-colors mr-2">{name}</span>
+          </Link>
+          <span className="font-sans text-body-sm text-tertiary">
+            <Moment format="YYYY/MM/DD hh:mm A">{date}</Moment>
+          </span>
+        </div>
+        
         {!auth.loading && user === auth.user._id && (
           <button
             onClick={() => deleteComment(postId, _id)}
-            type="button"
-            className="btn btn-dark"
-            style={{ padding: '0.3rem 0.7rem', margin: 0 }}
+            className="text-on-surface-variant hover:text-error transition-colors p-1 rounded hover:bg-error/10 opacity-0 group-hover:opacity-100"
+            title="Delete Comment"
           >
-            <i className="fas fa-trash-alt"></i>
+            <span className="material-symbols-outlined text-sm">delete</span>
           </button>
         )}
       </div>
-      <p className="my-1">{text}</p>
+      
+      <p className="font-sans text-body text-on-surface-variant whitespace-pre-wrap">
+        {text}
+      </p>
+      
+      <div className="flex gap-4 mt-3">
+        <button className="text-tertiary hover:text-primary font-sans text-body-sm flex items-center gap-1 transition-colors">
+          <span className="material-symbols-outlined text-[16px]">keyboard_arrow_up</span> 
+        </button>
+        <button className="text-tertiary hover:text-on-surface font-sans text-body-sm flex items-center gap-1 transition-colors">
+          Reply
+        </button>
+      </div>
     </div>
   </div>
 );
