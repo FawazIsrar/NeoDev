@@ -54,7 +54,10 @@ router.post(
           process.env.JWT_SECRET || config.get('jwtSecret'),
         { expiresIn: 360000 },
         (err, token) => {
-          if (err) throw err;
+          if (err) {
+            console.error('JWT Sign Error:', err.message);
+            return res.status(500).json({ msg: 'Server error: Token generation failed.' });
+          }
           res.json({ token });
         }
       );
